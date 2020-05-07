@@ -1,14 +1,15 @@
-service: notes-app-ext-auth
+service: investor-resource-auth
 
 custom:
   # Our stage is based on what is passed in when running serverless
-  # commands. Or fallsback to what we have set in the provider section.
+  # commands, or fall back to what we have set in the provider section.
   stage: ${opt:stage, self:provider.stage}
+  app: investor
 
 provider:
   name: aws
   stage: dev
-  region: us-east-1
+  region: ap-southeast-1 
 
 resources:
   Resources:
@@ -16,7 +17,7 @@ resources:
       Type: AWS::Cognito::UserPool
       Properties:
         # Generate a name based on the stage
-        UserPoolName: ${self:custom.stage}-ext-user-pool
+        UserPoolName: ${self:custom.stage}-${self:custom.app}-user-pool
         # Set email as an alias
         UsernameAttributes:
           - email
@@ -27,7 +28,7 @@ resources:
       Type: AWS::Cognito::UserPoolClient
       Properties:
         # Generate an app client name based on the stage
-        ClientName: ${self:custom.stage}-ext-user-pool-client
+        ClientName: ${self:custom.stage}-${self:custom.app}-user-pool-client
         UserPoolId:
           Ref: CognitoUserPool
         ExplicitAuthFlows:
@@ -39,7 +40,7 @@ resources:
       Type: AWS::Cognito::IdentityPool
       Properties:
         # Generate a name based on the stage
-        IdentityPoolName: ${self:custom.stage}ExtIdentityPool
+        IdentityPoolName: ${self:custom.stage}-${self:custom.app}-identity-pool
         # Don't allow unathenticated users
         AllowUnauthenticatedIdentities: false
         # Link to our User Pool
@@ -89,19 +90,6 @@ resources:
                     - 'cognito-sync:*'
                     - 'cognito-identity:*'
                   Resource: '*'
-                # Allow users to upload attachments to their
-                # folder inside our S3 bucket
-                - Effect: 'Allow'
-                  Action:
-                    - 's3:*'
-                  Resource:
-                    - Fn::Join:
-                      - ''
-                      -
-                        - 'Fn::ImportValue': ${self:custom.stage}-ExtAttachmentsBucketArn
-                        - '/private/'
-                        - '$'
-                        - '{cognito-identity.amazonaws.com:sub}/*'
 
   # Print out the Id of the User Pool and Identity Pool that are created
   Outputs:
@@ -121,5 +109,5 @@ resources:
       Value:
         Ref: CognitoAuthRole
       Export:
-        Name: ExtCognitoAuthRole-${self:custom.stage}
+        Name: CognitoAuthRole-${self:custom.stage}-${self:custom.app}
 
