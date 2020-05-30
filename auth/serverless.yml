@@ -39,8 +39,8 @@ resources:
     CognitoIdentityPool:
       Type: AWS::Cognito::IdentityPool
       Properties:
-        # Generate a name based on the stage
-        IdentityPoolName: ${self:custom.stage}-${self:custom.app}-identity-pool
+        # Generate a name based on the stage (- is not allowed in the name)
+        IdentityPoolName: ${self:custom.stage}_${self:custom.app}_identity_pool
         # Don't allow unathenticated users
         AllowUnauthenticatedIdentities: false
         # Link to our User Pool
@@ -49,6 +49,7 @@ resources:
               Ref: CognitoUserPoolClient
             ProviderName:
               Fn::GetAtt: [ "CognitoUserPool", "ProviderName" ]
+        # Link to Facebook provider - 265641338088697
               
     # IAM roles
     CognitoIdentityPoolRoles:
