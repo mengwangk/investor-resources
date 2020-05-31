@@ -50,6 +50,8 @@ resources:
             ProviderName:
               Fn::GetAtt: [ "CognitoUserPool", "ProviderName" ]
         # Link to Facebook provider - 265641338088697
+        # FacebookIdentityProviders:
+          
               
     # IAM roles
     CognitoIdentityPoolRoles:
