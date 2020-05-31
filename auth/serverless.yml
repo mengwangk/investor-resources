@@ -49,9 +49,11 @@ resources:
               Ref: CognitoUserPoolClient
             ProviderName:
               Fn::GetAtt: [ "CognitoUserPool", "ProviderName" ]
-        # Link to Facebook provider - 265641338088697
-        # FacebookIdentityProviders:
-          
+        # https://forum.serverless.com/t/cognito-user-identity-pools-as-serverless-yml-resource-defs/2050/13
+        # https://stackoverflow.com/questions/49395669/can-i-setup-aws-cognito-user-pool-identity-providers-with-cloudformation
+        # https://docs.aws.amazon.com/cognitoidentity/latest/APIReference/API_CreateIdentityPool.html
+        SupportedLoginProviders:
+          'graph.facebook.com': "265641338088697"  
               
     # IAM roles
     CognitoIdentityPoolRoles:
